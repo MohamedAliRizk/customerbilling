@@ -6,6 +6,11 @@ import lombok.Data;
 
 public @Data class Customer implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public enum Gender {
 		MALE, FEMALE
 	}
@@ -16,8 +21,22 @@ public @Data class Customer implements Serializable {
 	private Gender gender;
 	private Address address;
 
-	@Data class FullName {
+	public Customer(){
+		
+	}
+	public Customer(FullName fullName , Long id){
+		this.fullName = fullName;
+		this.id = id;
+	}
+	
+	@Data
+	public class FullName {
 		private String firstName, middleName, lastName;
+		public FullName(String firstName , String middleName, String lastName){
+			this.firstName = firstName;
+			this.lastName = lastName;
+			this.middleName = middleName;
+		}
 	}
 
 	@Data class Address {
