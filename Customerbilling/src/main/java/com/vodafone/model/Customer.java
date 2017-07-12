@@ -3,8 +3,10 @@ package com.vodafone.model;
 import java.io.Serializable;
 
 import lombok.Data;
+import lombok.ToString;
 
-public @Data class Customer implements Serializable {
+@Data
+public class Customer implements Serializable {
 
 	/**
 	 * 
@@ -20,6 +22,7 @@ public @Data class Customer implements Serializable {
 	private int age;
 	private Gender gender;
 	private Address address;
+	private String mobileNumber;
 
 	public Customer(){
 		
@@ -28,18 +31,14 @@ public @Data class Customer implements Serializable {
 		this.fullName = fullName;
 		this.id = id;
 	}
-	
+
+	@ToString(includeFieldNames=true)
 	@Data
 	public class FullName {
 		private String firstName, middleName, lastName;
-		public FullName(String firstName , String middleName, String lastName){
-			this.firstName = firstName;
-			this.lastName = lastName;
-			this.middleName = middleName;
-		}
 	}
 
-	@Data class Address {
+	public @Data class Address {
 		private String street, city, country;
 	}
 
