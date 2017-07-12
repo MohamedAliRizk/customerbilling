@@ -3,8 +3,10 @@ package com.vodafone.model;
 import java.io.Serializable;
 
 import lombok.Data;
+import lombok.ToString;
 
-public @Data class Customer implements Serializable {
+@Data
+public class Customer implements Serializable {
 
 	public enum Gender {
 		MALE, FEMALE
@@ -15,12 +17,15 @@ public @Data class Customer implements Serializable {
 	private int age;
 	private Gender gender;
 	private Address address;
+	private String mobileNumber;
 
-	@Data class FullName {
+	@ToString(includeFieldNames=true)
+	@Data
+	public class FullName {
 		private String firstName, middleName, lastName;
 	}
 
-	@Data class Address {
+	public @Data class Address {
 		private String street, city, country;
 	}
 
