@@ -79,6 +79,25 @@ public class CustomerServiceImpl implements CustomerService {
 		fullname1.setLastName("Rizk1");
 		customer1.setFullName(fullname1);
 		customers.add(customer1);
+		//
+		Customer customer2 = new Customer();
+		customer1.setId(2l);
+		Customer.FullName fullname2 = customer2.new FullName();
+		fullname1.setFirstName("Bothinah");
+		fullname1.setMiddleName("Mostafa");
+		fullname1.setLastName("Youssef");
+		customer1.setFullName(fullname1);
+		customers.add(customer2);
+		//
+		Customer customer3 = new Customer();
+		customer1.setId(3l);
+		Customer.FullName fullname3 = customer3.new FullName();
+		fullname1.setFirstName("Dina");
+		fullname1.setMiddleName("Ashraf");
+		fullname1.setLastName("El-sayed");
+		customer1.setFullName(fullname1);
+		customers.add(customer3);
+		//
 		return customers;
 	}
 
