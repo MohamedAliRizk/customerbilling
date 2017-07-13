@@ -69,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	private static List<Customer> populateDummyCustomers(){
 		List<Customer> customers = new ArrayList<Customer>();
-		
+		 
 		Customer customer1 = new Customer();
 		customer1.setId(1l);
 		Customer.FullName fullname1 = customer1.new FullName();
