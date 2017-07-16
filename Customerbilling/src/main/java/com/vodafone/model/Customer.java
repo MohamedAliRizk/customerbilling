@@ -8,6 +8,11 @@ import lombok.ToString;
 @Data
 public class Customer implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public enum Gender {
 		MALE, FEMALE
 	}
@@ -18,6 +23,14 @@ public class Customer implements Serializable {
 	private Gender gender;
 	private Address address;
 	private String mobileNumber;
+
+	public Customer(){
+		
+	}
+	public Customer(FullName fullName , Long id){
+		this.fullName = fullName;
+		this.id = id;
+	}
 
 	@ToString(includeFieldNames=true)
 	@Data

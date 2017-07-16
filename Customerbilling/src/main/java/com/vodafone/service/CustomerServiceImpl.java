@@ -2,9 +2,7 @@ package com.vodafone.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.logging.Logger;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.vodafone.exception.UserNotFoundException;
@@ -83,6 +81,25 @@ public class CustomerServiceImpl implements CustomerService {
 		fullname1.setLastName("Rizk1");
 		customer1.setFullName(fullname1);
 		customers.add(customer1);
+//		//
+//		Customer customer2 = new Customer();
+//		customer2.setId(2l);
+//		Customer.FullName fullname2 = customer2.new FullName();
+//		fullname2.setFirstName("Bothinah");
+//		fullname2.setMiddleName("Mostafa");
+//		fullname2.setLastName("Youssef");
+//		customer2.setFullName(fullname2);
+//		customers.add(customer2);
+//		//
+//		Customer customer3 = new Customer();
+//		customer3.setId(3l);
+//		Customer.FullName fullname3 = customer3.new FullName();
+//		fullname3.setFirstName("Dina");
+//		fullname3.setMiddleName("Ashraf");
+//		fullname3.setLastName("El-sayed");
+//		customer3.setFullName(fullname3);
+//		customers.add(customer3);
+//		//
 		return customers;
 	}
 
