@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,28 +15,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vodafone.model.Customer;
 import com.vodafone.service.CustomerService;
-import com.vodafone.service.CustomerServiceImpl;
 
-@RequestMapping("/Customers")
+@RequestMapping("/customers")
 @RestController
-@Secured("ACTUATOR")
+//@Secured("ACTUATOR")
 public class CustomerRestController {
+	
+	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
 	
 	@Autowired
 	CustomerService customerService;
 	
 	@RequestMapping(method=RequestMethod.GET , produces="application/json")
-	@PreAuthorize("hasRole('ACTUATOR')")
+//	@PreAuthorize("hasRole('ACTUATOR')")
 	public List<Customer> getAllCustomers(){
-		System.out.println("Inside getAllCustomers.");
+		LOGGER.debug("Inside getAllCustomers.");
 		return customerService.findAllCustomers();
 	}
-
-	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
 	
 	
-	
-	@RequestMapping(value = "/customers/", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<List<Customer>> listAllCustomers() {
 		LOGGER.debug("Start listAllCustomers Method.");
 		List<Customer> customers = customerService.findAllCustomers();
@@ -47,11 +44,12 @@ public class CustomerRestController {
 			return new ResponseEntity<List<Customer>>(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<List<Customer>>(customers, HttpStatus.OK);
-	}
+	}*/
 
 	
-	@RequestMapping(value = "/customers/{id}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Customer> getCustomer(@PathVariable("id") long id) {
 		LOGGER.info("Fetching Customer with id " + id);
 		Customer customer = customerService.findById(id);

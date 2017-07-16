@@ -51,8 +51,8 @@ public class AllCustomersTests {
     @Test
     public void getAllCustomer_authorized() {
 		try {
-			mockMvc.perform(MockMvcRequestBuilders.get("/Customers").header("Authorization", "Basic "
-				+ new String(Base64Utils.encode("act:act".getBytes()))
+			mockMvc.perform(MockMvcRequestBuilders.get("/customers").header("Authorization", "Basic "
+				+ new String(Base64Utils.encode("bill:abc123".getBytes()))
 	    		    )).andExpect(status().isOk()).andExpect(content().json("[{\"id\": 1,\"fullName\": {\"firstName\": \"Moh1\",\"middleName\": \"Ali1\",\"lastName\": \"Rizk1\"},\"age\": 0,\"gender\": null,\"address\": null,\"mobileNumber\": null}]"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
