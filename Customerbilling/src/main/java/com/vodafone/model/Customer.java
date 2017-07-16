@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 import lombok.ToString;
 
-@ToString(includeFieldNames=true)
+@ToString(includeFieldNames = true)
 @Data
 public class Customer implements Serializable {
 
@@ -19,5 +19,14 @@ public class Customer implements Serializable {
 	private Gender gender;
 	private Address address;
 	private String mobileNumber;
+
+	public Customer() {
+
+	}
+
+	public Customer(FullName fullName, Long id) {
+		this.fullName = fullName;
+		this.id = id;
+	}
 
 }

@@ -3,65 +3,62 @@ package com.vodafone.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import com.vodafone.commonExceptions.CustomerNotFoundException;
 import com.vodafone.model.Customer;
 import com.vodafone.model.FullName;
 
-@Repository
+@Component
 public class CustomerDAOImpl implements CustomerDAO {
 
-	private static List<Customer> customers;
-
-	static {
-		customers = populateDummyCustomers();
+	public static List<Customer> customers;
+	public CustomerDAOImpl(){
+		customers = new ArrayList<>();
+		FullName fullName1 = new FullName("Bothinah" , "Mostafa" , "Youssef");
+		FullName fullName2 = new FullName("Dina" , "Ashraf" , "Youssef");
+		FullName fullName3 = new FullName("Hatem" , "Mostafa" , "Youssef");
+		FullName fullName4 = new FullName("Tallat" , "Mostafa" , "Youssef");
+		customers.add(new Customer(fullName1 , 1l));
+		customers.add(new Customer(fullName2 , 2l));
+		customers.add(new Customer(fullName3 , 3l));
+		customers.add(new Customer(fullName4 , 4l));
 	}
-
-	private static List<Customer> populateDummyCustomers() {
-		List<Customer> customers = new ArrayList<Customer>();
-
-		Customer customer1 = new Customer();
-		customer1.setId(1l);
-		FullName fullname1 = new FullName();
-		fullname1.setFirstName("Moh1");
-		fullname1.setMiddleName("Ali1");
-		fullname1.setLastName("Rizk1");
-		customer1.setFullName(fullname1);
-		customers.add(customer1);
-		return customers;
+	@Override
+	public List<Customer> findAll() {
+		// TODO Auto-generated method stub
+		return null;
 	}
-
+	
 	// Mainly cassandra repo save method
-	@Override
-	public void save(Customer customer) {
+		@Override
+		public void save(Customer customer) {
 
-		Customer possibleCustomer = customers.stream().filter(c -> customer.getId() == c.getId().longValue()).findAny()
-				.orElse(null);
+			Customer possibleCustomer = customers.stream().filter(c -> customer.getId() == c.getId().longValue()).findAny()
+					.orElse(null);
 
-		if (possibleCustomer != null) {
+			if (possibleCustomer != null) {
 
-			customers.get(0).setAddress(customer.getAddress());
-			customers.get(0).setAge(customer.getAge());
-			customers.get(0).setFullName(customer.getFullName());
-			customers.get(0).setMobileNumber(customer.getMobileNumber());
-		} else {
-			throw new CustomerNotFoundException("Customer Not found", customer.getId() + "");
+				customers.get(0).setAddress(customer.getAddress());
+				customers.get(0).setAge(customer.getAge());
+				customers.get(0).setFullName(customer.getFullName());
+				customers.get(0).setMobileNumber(customer.getMobileNumber());
+			} else {
+				throw new CustomerNotFoundException("Customer Not found", customer.getId() + "");
+			}
+
 		}
 
-	}
+		@Override
+		public void delete(Customer customer) {
 
-	@Override
-	public void delete(Customer customer) {
+			Customer possibleCustomer = customers.stream().filter(c -> customer.getId() == c.getId().longValue()).findAny()
+					.orElse(null);
 
-		Customer possibleCustomer = customers.stream().filter(c -> customer.getId() == c.getId().longValue()).findAny()
-				.orElse(null);
-
-		if (possibleCustomer != null) {
-			customers.remove(possibleCustomer);
-		} else {
-			throw new CustomerNotFoundException("Customer Not found", customer.getId() + "");
+			if (possibleCustomer != null) {
+				customers.remove(possibleCustomer);
+			} else {
+				throw new CustomerNotFoundException("Customer Not found", customer.getId() + "");
+			}
 		}
-	}
-
 }

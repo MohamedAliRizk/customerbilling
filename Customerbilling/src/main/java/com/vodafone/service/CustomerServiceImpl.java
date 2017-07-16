@@ -3,7 +3,7 @@ package com.vodafone.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,7 @@ import com.vodafone.controller.CustomerRestController;
 import com.vodafone.dao.CustomerDAO;
 import com.vodafone.dto.CustomerUpdateDTO;
 import com.vodafone.dto.CustomerUpdateRepresentation;
+import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Customer;
 import com.vodafone.model.FullName;
 import com.vodafone.utils.Validator;
@@ -25,6 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	private CustomerDAO customerDAOImpl;
 	
+
 	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
 
 	static {
@@ -32,13 +34,16 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer findById(long id) {
+	public Customer findById(long id) throws UserNotFoundException {
 		customers.forEach(System.out::println);
-		return customers.stream().filter(customer -> id == customer.getId().longValue()).findAny().orElse(null);
-		/*
-		 * for (Customer customer : customers) { if (customer.getId() == id)
-		 * return customer; }
-		 */
+		Customer customerFound =  customers.stream().filter(customer -> id == customer.getId().longValue()).findAny().orElse(null);
+		if(customerFound == null)
+		{	
+			LOGGER.error("user not found");
+			throw new UserNotFoundException();	
+		}
+		else 
+			return customerFound;
 	}
 
 	@Override
@@ -72,7 +77,6 @@ public class CustomerServiceImpl implements CustomerService {
 
 	private static List<Customer> populateDummyCustomers() {
 		List<Customer> customers = new ArrayList<Customer>();
-
 		Customer customer1 = new Customer();
 		customer1.setId(1l);
 		FullName fullname1 = new FullName();
@@ -81,6 +85,25 @@ public class CustomerServiceImpl implements CustomerService {
 		fullname1.setLastName("Rizk1");
 		customer1.setFullName(fullname1);
 		customers.add(customer1);
+//		//
+//		Customer customer2 = new Customer();
+//		customer2.setId(2l);
+//		Customer.FullName fullname2 = customer2.new FullName();
+//		fullname2.setFirstName("Bothinah");
+//		fullname2.setMiddleName("Mostafa");
+//		fullname2.setLastName("Youssef");
+//		customer2.setFullName(fullname2);
+//		customers.add(customer2);
+//		//
+//		Customer customer3 = new Customer();
+//		customer3.setId(3l);
+//		Customer.FullName fullname3 = customer3.new FullName();
+//		fullname3.setFirstName("Dina");
+//		fullname3.setMiddleName("Ashraf");
+//		fullname3.setLastName("El-sayed");
+//		customer3.setFullName(fullname3);
+//		customers.add(customer3);
+//		//
 		return customers;
 	}
 

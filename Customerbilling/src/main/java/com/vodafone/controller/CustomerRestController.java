@@ -7,23 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vodafone.commonExceptions.CustomerNotFoundException;
 import com.vodafone.dto.CustomerUpdateDTO;
 import com.vodafone.dto.CustomerUpdateRepresentation;
+import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Customer;
 import com.vodafone.service.CustomerService;
 
+@RequestMapping("/customers")
 @RestController
+// @Secured("ACTUATOR")
 public class CustomerRestController {
 
 	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
@@ -31,7 +32,7 @@ public class CustomerRestController {
 	@Autowired
 	private CustomerService customerService;
 
-	@RequestMapping(value = "/customers/", method = RequestMethod.GET)
+	@Autowired
 	public ResponseEntity<List<Customer>> listAllCustomers() {
 		LOGGER.debug("Start listAllCustomers Method.");
 		List<Customer> customers = customerService.findAllCustomers();
@@ -43,15 +44,11 @@ public class CustomerRestController {
 		return new ResponseEntity<List<Customer>>(customers, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/customers/{id}", method = RequestMethod.GET, produces = {
-			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<Customer> getCustomer(@PathVariable("id") long id) {
+	@PreAuthorize("hasRole('ADMIN')")
+	public @ResponseBody ResponseEntity<?> getCustomer(@PathVariable("id") long id) throws UserNotFoundException {
 		LOGGER.info("Fetching Customer with id " + id);
-		Customer customer = customerService.findById(id);
-		if (customer == null) {
-			LOGGER.info("Customer with id " + id + " not found");
-			return new ResponseEntity<Customer>(HttpStatus.NOT_FOUND);
-		}
+		Customer customer = null;
+		customer = customerService.findById(id);
 		return new ResponseEntity<Customer>(customer, HttpStatus.OK);
 	}
 
@@ -72,10 +69,5 @@ public class CustomerRestController {
 		customerService.deleteCustomerById(id);
 
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
-	}
-
-	@ExceptionHandler(CustomerNotFoundException.class)
-	@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Customer was not found")
-	public void catchEx() {
 	}
 }
