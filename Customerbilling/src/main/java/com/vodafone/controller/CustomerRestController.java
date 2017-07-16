@@ -10,8 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vodafone.exception.ServiceException;
+import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Customer;
 import com.vodafone.service.CustomerService;
 
@@ -34,18 +37,14 @@ public class CustomerRestController {
 		}
 		return new ResponseEntity<List<Customer>>(customers, HttpStatus.OK);
 	}
-
+	
 	
 	@RequestMapping(value = "/customers/{id}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<Customer> getCustomer(@PathVariable("id") long id) {
+	public @ResponseBody ResponseEntity<?> getCustomer(@PathVariable("id") long id) throws UserNotFoundException {
 		LOGGER.info("Fetching Customer with id " + id);
-		Customer customer = customerService.findById(id);
-		if (customer == null) {
-			LOGGER.info("Customer with id " + id + " not found");
-			return new ResponseEntity<Customer>(HttpStatus.NOT_FOUND);
-		}
+		Customer customer = null;
+			 customer = customerService.findById(id);
 		return new ResponseEntity<Customer>(customer, HttpStatus.OK);
 	}
-
 }

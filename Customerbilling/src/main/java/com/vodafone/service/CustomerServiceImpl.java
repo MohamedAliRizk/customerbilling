@@ -3,27 +3,33 @@ package com.vodafone.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.logging.Logger;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Customer;
-
 
 @Service("customerService")
 public class CustomerServiceImpl implements CustomerService {
 
 	private static List<Customer> customers;
-	
+	private static Logger logger = Logger.getLogger(CustomerServiceImpl.class);
 	static{
 		customers= populateDummyCustomers();
 	}
 	
 	@Override
-	public Customer findById(long id) {
+	public Customer findById(long id) throws UserNotFoundException {
 		customers.forEach(System.out::println);
-		return customers.stream().filter(customer -> id == customer.getId().longValue()).findAny().orElse(null);
-		/*for (Customer customer : customers) {
-			if (customer.getId() == id) return customer;
-		}*/
+		Customer customerFound =  customers.stream().filter(customer -> id == customer.getId().longValue()).findAny().orElse(null);
+		if(customerFound == null)
+		{	
+			logger.error("user not found");
+			throw new UserNotFoundException();	
+		}
+		else 
+			return customerFound;
 	}
 
 	@Override
@@ -69,7 +75,6 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	private static List<Customer> populateDummyCustomers(){
 		List<Customer> customers = new ArrayList<Customer>();
-		 
 		Customer customer1 = new Customer();
 		customer1.setId(1l);
 		Customer.FullName fullname1 = customer1.new FullName();
