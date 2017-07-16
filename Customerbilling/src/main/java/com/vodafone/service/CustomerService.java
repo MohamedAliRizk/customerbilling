@@ -2,6 +2,8 @@ package com.vodafone.service;
 
 import java.util.List;
 
+import com.vodafone.dto.CustomerUpdateDTO;
+import com.vodafone.dto.CustomerUpdateRepresentation;
 import com.vodafone.model.Customer;
 
 public interface CustomerService {
@@ -12,9 +14,9 @@ public interface CustomerService {
 
 	void saveCustomer(Customer customer);
 
-	void updateCustomer(Customer customer);
+	public CustomerUpdateRepresentation updateCustomer(CustomerUpdateDTO customer,Long id);
 
-	void deleteCustomerById(long id);
+	public void deleteCustomerById(Long id);
 
 	List<Customer> findAllCustomers();
 
