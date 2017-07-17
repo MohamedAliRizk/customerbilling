@@ -30,10 +30,15 @@ public class CustomerRestController {
 	CustomerService customerService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
-	// @PreAuthorize("hasRole('ACTUATOR')")
-	public List<Customer> getAllCustomers() {
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<List<Customer>> getAllCustomers() {
 		LOGGER.debug("Inside getAllCustomers.");
-		return customerService.findAllCustomers();
+		List<Customer> customers = customerService.findAllCustomers();
+		if (customers.isEmpty()) {
+			LOGGER.info("Customer List is empty.");
+			return new ResponseEntity<List<Customer>>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Customer>>(customers, HttpStatus.OK);
 	}
 
 	/*@RequestMapping(value = "/", method = RequestMethod.GET)
