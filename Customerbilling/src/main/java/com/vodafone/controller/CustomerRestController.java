@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vodafone.dto.CustomerUpdateDTO;
 import com.vodafone.dto.CustomerUpdateRepresentation;
+import com.vodafone.exception.DatabaseException;
+import com.vodafone.exception.ServiceException;
 import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Customer;
 import com.vodafone.service.CustomerService;
@@ -51,18 +53,20 @@ public class CustomerRestController {
 		customer = customerService.findById(id);
 		return new ResponseEntity<Customer>(customer, HttpStatus.OK);
 	}
-
+	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping(value = "/customer/{id}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> updateCustomer(@RequestBody CustomerUpdateDTO customerUpdateDTO, @PathVariable Long id) {
+	public ResponseEntity<?> updateCustomer(@RequestBody CustomerUpdateDTO customerUpdateDTO, @PathVariable Long id) throws UserNotFoundException, DatabaseException {
 
 		LOGGER.info("An attempt to update data for customer with id : " + id);
 
 		return new ResponseEntity<CustomerUpdateRepresentation>(customerService.updateCustomer(customerUpdateDTO, id),
 				HttpStatus.ACCEPTED);
 	}
-
+	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping(value = "/customer/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> deleteCustomer(@PathVariable Long id) {
+	public ResponseEntity<?> deleteCustomer(@PathVariable Long id) throws ServiceException, DatabaseException {
 
 		LOGGER.info("An attempt to delete customer with id : " + id);
 

@@ -1,7 +1,6 @@
 package com.vodafone.customer;
 
 import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.vodafone.dto.CustomerUpdateDTO;
 import com.vodafone.dto.CustomerUpdateRepresentation;
 import com.vodafone.model.Address;
@@ -37,6 +35,8 @@ public class CustomerRestControllerTests {
 
 	@Autowired
 	private TestRestTemplate restTemplate;
+
+	// private MockMvc mockMvc;
 
 	private Address address;
 
@@ -69,6 +69,11 @@ public class CustomerRestControllerTests {
 
 		headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		// admin role
+		headers.set("Authorization", "Basic YmlsbDphYmMxMjM=");
+
+		// mockMvc =
+		// MockMvcBuilders.webAppContextSetup(context).addFilter(springSecurityFilterChain).build();
 
 	}
 
@@ -78,10 +83,13 @@ public class CustomerRestControllerTests {
 		Map<String, Long> urlVariables = new HashMap<>();
 		urlVariables.put("id", 1l);
 
+		// user role
+		// headers.set("Authorization", "Basic dG9tOmFiYzEyMw==");
 		httpEntity = new HttpEntity<CustomerUpdateDTO>(customerUpdateDTO, headers);
 
-		ResponseEntity<CustomerUpdateRepresentation> response = this.restTemplate.exchange("/customer/{id}/update",
-				HttpMethod.PUT, httpEntity, CustomerUpdateRepresentation.class, urlVariables);
+		ResponseEntity<CustomerUpdateRepresentation> response = this.restTemplate.exchange(
+				"/customers/customer/{id}/update", HttpMethod.PUT, httpEntity, CustomerUpdateRepresentation.class,
+				urlVariables);
 
 		assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
 		assertEquals(age, response.getBody().getAge());
@@ -94,12 +102,16 @@ public class CustomerRestControllerTests {
 		Map<String, Long> urlVariables = new HashMap<>();
 		urlVariables.put("id", 2l);
 
+		// user role
+		// headers.set("Authorization", "Basic dG9tOmFiYzEyMw==");
 		httpEntity = new HttpEntity<CustomerUpdateDTO>(customerUpdateDTO, headers);
 
-		ResponseEntity<CustomerUpdateRepresentation> response = this.restTemplate.exchange("/customer/{id}/update",
-				HttpMethod.PUT, httpEntity, CustomerUpdateRepresentation.class, urlVariables);
+		ResponseEntity<CustomerUpdateRepresentation> response = this.restTemplate.exchange(
+				"/customers/customer/{id}/update", HttpMethod.PUT, httpEntity, CustomerUpdateRepresentation.class,
+				urlVariables);
 
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		
 	}
 
 	@Test
@@ -108,8 +120,11 @@ public class CustomerRestControllerTests {
 		Map<String, Long> urlVariables = new HashMap<>();
 		urlVariables.put("id", 1l);
 
-		ResponseEntity<CustomerUpdateRepresentation> response = this.restTemplate.exchange("/customer/{id}/delete",
-				HttpMethod.DELETE, null, CustomerUpdateRepresentation.class, urlVariables);
+		httpEntity = new HttpEntity<>(headers);
+
+		ResponseEntity<CustomerUpdateRepresentation> response = this.restTemplate.exchange(
+				"/customers/customer/{id}/delete", HttpMethod.DELETE, httpEntity, CustomerUpdateRepresentation.class,
+				urlVariables);
 
 		assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
 	}
@@ -120,9 +135,12 @@ public class CustomerRestControllerTests {
 		Map<String, Long> urlVariables = new HashMap<>();
 		urlVariables.put("id", 2l);
 
-		ResponseEntity<CustomerUpdateRepresentation> response = this.restTemplate.exchange("/customer/{id}/delete",
-				HttpMethod.DELETE, null, CustomerUpdateRepresentation.class, urlVariables);
+		httpEntity = new HttpEntity<>(headers);
 
-		assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+		ResponseEntity<CustomerUpdateRepresentation> response = this.restTemplate.exchange(
+				"/customers/customer/{id}/delete", HttpMethod.DELETE, httpEntity, CustomerUpdateRepresentation.class,
+				urlVariables);
+
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 	}
 }

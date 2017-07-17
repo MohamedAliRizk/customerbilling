@@ -3,9 +3,9 @@ package com.vodafone.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.vodafone.commonExceptions.CustomerNotFoundException;
 import com.vodafone.model.Customer;
 import com.vodafone.model.FullName;
 
@@ -44,7 +44,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 				customers.get(0).setFullName(customer.getFullName());
 				customers.get(0).setMobileNumber(customer.getMobileNumber());
 			} else {
-				throw new CustomerNotFoundException("Customer Not found", customer.getId() + "");
+				throw new UsernameNotFoundException("Customer with id "+ customer.getId()+" Not found ");
 			}
 
 		}
@@ -58,7 +58,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 			if (possibleCustomer != null) {
 				customers.remove(possibleCustomer);
 			} else {
-				throw new CustomerNotFoundException("Customer Not found", customer.getId() + "");
+				throw new UsernameNotFoundException("Customer with id "+ customer.getId()+" Not found ");
 			}
 		}
 }

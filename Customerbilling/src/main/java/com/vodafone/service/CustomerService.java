@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.vodafone.dto.CustomerUpdateDTO;
 import com.vodafone.dto.CustomerUpdateRepresentation;
+import com.vodafone.exception.DatabaseException;
+import com.vodafone.exception.ServiceException;
 import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Customer;
 
@@ -15,9 +17,9 @@ public interface CustomerService {
 
 	void saveCustomer(Customer customer);
 
-	public CustomerUpdateRepresentation updateCustomer(CustomerUpdateDTO customer,Long id);
+	public CustomerUpdateRepresentation updateCustomer(CustomerUpdateDTO customer,Long id) throws DatabaseException, UserNotFoundException;
 
-	public void deleteCustomerById(Long id);
+	public void deleteCustomerById(Long id) throws ServiceException, DatabaseException;
 
 	List<Customer> findAllCustomers();
 
