@@ -22,7 +22,9 @@ import com.vodafone.dto.CustomerUpdateRepresentation;
 import com.vodafone.exception.DatabaseException;
 import com.vodafone.exception.ServiceException;
 import com.vodafone.exception.UserNotFoundException;
+import com.vodafone.model.Bill;
 import com.vodafone.model.Customer;
+import com.vodafone.service.BillService;
 import com.vodafone.service.CustomerService;
 
 @RequestMapping("/customers")
@@ -35,6 +37,7 @@ public class CustomerRestController {
 	@Autowired
 	private CustomerService customerService;
 
+	private BillService billService;
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<Customer>> getAllCustomers() {
@@ -87,4 +90,12 @@ public class CustomerRestController {
 
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
+	@RequestMapping(value = "{customerID}/bills", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+	//@PreAuthorize("hasRole('ADMIN')")
+	public @ResponseBody ResponseEntity<?> getCustomerBills(@PathVariable("customerID") long customerID)  {
+		LOGGER.info("Fetching Customer Bills with id " + customerID);
+		List<Bill> bills = null;
+		bills = billService.findAllBills(customerID);
+		return new ResponseEntity<List<Bill>>(bills, HttpStatus.OK);
+	}	
 }
