@@ -3,34 +3,24 @@ package com.vodafone.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.logging.Logger;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.vodafone.model.Customer;
 import com.vodafone.model.FullName;
+import com.vodafone.service.CustomerServiceImpl;
 
 @Component
 public class CustomerDAOImpl implements CustomerDAO {
 
-	public static List<Customer> customers;
-	public CustomerDAOImpl(){
-		customers = new ArrayList<>();
-		FullName fullName1 = new FullName("Bothinah" , "Mostafa" , "Youssef");
-		FullName fullName2 = new FullName("Dina" , "Ashraf" , "Youssef");
-		FullName fullName3 = new FullName("Hatem" , "Mostafa" , "Youssef");
-		FullName fullName4 = new FullName("Tallat" , "Mostafa" , "Youssef");
-		customers.add(new Customer(fullName1 , 1l));
-		customers.add(new Customer(fullName2 , 2l));
-		customers.add(new Customer(fullName3 , 3l));
-		customers.add(new Customer(fullName4 , 4l));
-	}
-	@Override
-	public List<Customer> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+	private static List<Customer> customers;
+	private static Logger logger = Logger.getLogger(CustomerServiceImpl.class);
+	static{
+		customers= populateDummyCustomers();
 	}
 	
-	// Mainly cassandra repo save method
+	
 		@Override
 		public void save(Customer customer) {
 
@@ -61,4 +51,25 @@ public class CustomerDAOImpl implements CustomerDAO {
 				throw new UsernameNotFoundException("Customer with id "+ customer.getId()+" Not found ");
 			}
 		}
+
+	
+	@Override
+	public List<Customer> findAll() {
+		return customers;
+	}
+
+	
+	
+	private static List<Customer> populateDummyCustomers(){
+		List<Customer> customers = new ArrayList<Customer>();
+		Customer customer1 = new Customer();
+		customer1.setId(1l);
+		FullName fullname1 = new FullName();
+		fullname1.setFirstName("Moh1");
+	         	fullname1.setMiddleName("Ali1");
+		fullname1.setLastName("Rizk1");
+		customer1.setFullName(fullname1);
+		customers.add(customer1);
+		return customers;
+	}
 }

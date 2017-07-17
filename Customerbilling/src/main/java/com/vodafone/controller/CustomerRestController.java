@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +35,19 @@ public class CustomerRestController {
 	@Autowired
 	private CustomerService customerService;
 
-	@Autowired
+	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<List<Customer>> getAllCustomers() {
+		LOGGER.debug("Inside getAllCustomers.");
+		List<Customer> customers = customerService.findAllCustomers();
+		if (customers.isEmpty()) {
+			LOGGER.info("Customer List is empty.");
+			return new ResponseEntity<List<Customer>>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<Customer>>(customers, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<List<Customer>> listAllCustomers() {
 		LOGGER.debug("Start listAllCustomers Method.");
 		List<Customer> customers = customerService.findAllCustomers();

@@ -1,7 +1,8 @@
 package com.vodafone.service;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,23 +13,27 @@ import com.vodafone.dto.CustomerUpdateDTO;
 import com.vodafone.dto.CustomerUpdateRepresentation;
 import com.vodafone.exception.DatabaseException;
 import com.vodafone.exception.ServiceException;
+
 import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Customer;
-import com.vodafone.model.FullName;
 import com.vodafone.utils.Validator;
 
 @Service("customerService")
 public class CustomerServiceImpl implements CustomerService {
 
 	private static List<Customer> customers;
+	
+	@Autowired
+	CustomerDAO customerDAO;
 
 	@Autowired
 	private CustomerDAO customerDAOImpl;
 
 	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
 
-	static {
-		customers = populateDummyCustomers();
+	@PostConstruct
+	public void populateList(){
+		customers = customerDAO.findAll();
 	}
 
 	@Override
@@ -42,6 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
 		} else
 			return customerFound;
 	}
+	
 
 	@Override
 	public Customer findByName(String name) {
@@ -57,7 +63,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public List<Customer> findAllCustomers() {
-		return customers;
+		return customerDAO.findAll();
 	}
 
 	@Override
@@ -72,37 +78,7 @@ public class CustomerServiceImpl implements CustomerService {
 		return false;
 	}
 
-	private static List<Customer> populateDummyCustomers() {
-		List<Customer> customers = new ArrayList<Customer>();
-		Customer customer1 = new Customer();
-		customer1.setId(1l);
-		FullName fullname1 = new FullName();
-		fullname1.setFirstName("Moh1");
-		fullname1.setMiddleName("Ali1");
-		fullname1.setLastName("Rizk1");
-		customer1.setFullName(fullname1);
-		customers.add(customer1);
-		// //
-		// Customer customer2 = new Customer();
-		// customer2.setId(2l);
-		// Customer.FullName fullname2 = customer2.new FullName();
-		// fullname2.setFirstName("Bothinah");
-		// fullname2.setMiddleName("Mostafa");
-		// fullname2.setLastName("Youssef");
-		// customer2.setFullName(fullname2);
-		// customers.add(customer2);
-		// //
-		// Customer customer3 = new Customer();
-		// customer3.setId(3l);
-		// Customer.FullName fullname3 = customer3.new FullName();
-		// fullname3.setFirstName("Dina");
-		// fullname3.setMiddleName("Ashraf");
-		// fullname3.setLastName("El-sayed");
-		// customer3.setFullName(fullname3);
-		// customers.add(customer3);
-		// //
-		return customers;
-	}
+	
 
 	@Override
 	public CustomerUpdateRepresentation updateCustomer(CustomerUpdateDTO customerUpdateDTO, Long id)

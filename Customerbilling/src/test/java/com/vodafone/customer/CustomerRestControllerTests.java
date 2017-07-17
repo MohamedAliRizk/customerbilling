@@ -36,8 +36,6 @@ public class CustomerRestControllerTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 
-	// private MockMvc mockMvc;
-
 	private Address address;
 
 	private FullName fullName;
