@@ -93,20 +93,30 @@
             </exclusions>
             <scope>test</scope>
         </dependency>
-      
-       
-        <dependency>
+
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
-			</dependency>
-        <dependency>
-        	<groupId>org.springframework.security</groupId>
-        	<artifactId>spring-security-test</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.7.0</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+
 	</dependencies>
 
 	<build>
