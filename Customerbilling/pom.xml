@@ -70,6 +70,7 @@
 
 
 		<!-- testing -->
+<<<<<<< Updated upstream
         
         <dependency>
             <groupId>org.springframework</groupId>
@@ -93,13 +94,48 @@
             </exclusions>
             <scope>test</scope>
         </dependency>
+=======
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<version>1.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.10.19</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+>>>>>>> Stashed changes
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.1.2</version>
 		</dependency>
+<<<<<<< Updated upstream
 		
+=======
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+		</dependency>
+>>>>>>> Stashed changes
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -110,12 +146,15 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.7.0</version>
 		</dependency>
+<<<<<<< Updated upstream
 		
 		<dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>2.9.0</version>
         </dependency>
+=======
+>>>>>>> Stashed changes
 
 	</dependencies>
 
