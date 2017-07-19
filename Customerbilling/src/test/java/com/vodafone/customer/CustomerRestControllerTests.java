@@ -1,15 +1,14 @@
 package com.vodafone.customer;
 
 import static org.junit.Assert.assertEquals;
+
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,15 +16,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import com.vodafone.dto.CustomerUpdateDTO;
 import com.vodafone.dto.CustomerUpdateRepresentation;
 import com.vodafone.model.Address;
 import com.vodafone.model.FullName;
 
-@RunWith(value = SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class CustomerRestControllerTests {
+//@RunWith(value = SpringRunner.class)
+//@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+public class CustomerRestControllerTests extends AbstractMvcTest {
 
 	private String country = "Sweden";
 
@@ -47,7 +46,7 @@ public class CustomerRestControllerTests {
 	private HttpHeaders headers;
 
 	@Before
-	public void setup() {
+	public void setup() throws UnsupportedEncodingException, Exception {
 
 		address = new Address();
 		address.setCity("Stockholm");
@@ -68,7 +67,7 @@ public class CustomerRestControllerTests {
 		headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		// admin role
-		headers.set("Authorization", "Basic YmlsbDphYmMxMjM=");
+		headers.set("Authorization", extractToken(login("tom", "abc123").andReturn()));
 
 		// mockMvc =
 		// MockMvcBuilders.webAppContextSetup(context).addFilter(springSecurityFilterChain).build();
