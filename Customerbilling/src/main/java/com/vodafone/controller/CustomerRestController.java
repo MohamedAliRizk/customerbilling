@@ -36,8 +36,9 @@ public class CustomerRestController {
 
 	@Autowired
 	private CustomerService customerService;
-
+	@Autowired
 	private BillService billService;
+
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<Customer>> getAllCustomers() {
@@ -69,17 +70,18 @@ public class CustomerRestController {
 		customer = customerService.findById(id);
 		return new ResponseEntity<Customer>(customer, HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping(value = "/customer/{id}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> updateCustomer(@RequestBody CustomerUpdateDTO customerUpdateDTO, @PathVariable Long id) throws UserNotFoundException, DatabaseException {
+	public ResponseEntity<?> updateCustomer(@RequestBody CustomerUpdateDTO customerUpdateDTO, @PathVariable Long id)
+			throws UserNotFoundException, DatabaseException {
 
 		LOGGER.info("An attempt to update data for customer with id : " + id);
 
 		return new ResponseEntity<CustomerUpdateRepresentation>(customerService.updateCustomer(customerUpdateDTO, id),
 				HttpStatus.ACCEPTED);
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping(value = "/customer/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> deleteCustomer(@PathVariable Long id) throws ServiceException, DatabaseException {
@@ -90,12 +92,19 @@ public class CustomerRestController {
 
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
-	@RequestMapping(value = "{customerID}/bills", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-	//@PreAuthorize("hasRole('ADMIN')")
-	public @ResponseBody ResponseEntity<?> getCustomerBills(@PathVariable("customerID") long customerID)  {
+
+	@RequestMapping(value = "{customerID}/bills", method = RequestMethod.GET, produces = {
+			MediaType.APPLICATION_JSON_VALUE })
+	// @PreAuthorize("hasRole('ADMIN')")
+	public @ResponseBody ResponseEntity<?> getCustomerBills(@PathVariable("customerID") long customerID)
+			throws UserNotFoundException {
 		LOGGER.info("Fetching Customer Bills with id " + customerID);
 		List<Bill> bills = null;
 		bills = billService.findAllBills(customerID);
-		return new ResponseEntity<List<Bill>>(bills, HttpStatus.OK);
-	}	
+		if (bills.isEmpty()) {
+			LOGGER.info("Bills List is empty.");
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} else
+			return new ResponseEntity<List<Bill>>(bills, HttpStatus.OK);
+	}
 }
