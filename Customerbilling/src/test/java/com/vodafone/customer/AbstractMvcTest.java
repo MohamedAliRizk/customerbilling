@@ -35,43 +35,47 @@ public class AbstractMvcTest {
 
 	@Autowired
 	private FilterChainProxy springSecurityFilterChain;
-	
+
 	protected static MockMvc mockMvc;
-	
+
 	private static Set<Class> inited = new HashSet<>();
 	static final String HEADER_STRING = "Authorization";
-	
+
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).addFilter(springSecurityFilterChain).build();
 	}
-	
-	@Before
-    public void init() throws Exception {
-        if (!inited.contains(getClass())) {
-            doInit();
-            inited.add(getClass());
-        }
-    }
-	
-    protected void doInit() throws Exception {
-    }
-    
-    protected static ResultActions login(String username, String password) throws Exception {
-        final AccountCredentials credentials = new AccountCredentials();
-        credentials.setUsername(username);
-        credentials.setPassword(password);
-        return mockMvc.perform(post("/login").content(json(credentials))
-                        .contentType(MediaType.APPLICATION_JSON));
-    }
 
-    protected String extractToken(MvcResult result) throws UnsupportedEncodingException {
-//        return JsonPath.read(result.getResponse().getContentAsString(), "$.token");
-    	return result.getResponse().getHeader(HEADER_STRING);
-    }
-    
-    protected static String json(Object obj) throws JsonProcessingException {
-    	return new ObjectMapper().writeValueAsString(obj);
-    }
+	@Before
+	public void init() throws Exception {
+		if (!inited.contains(getClass())) {
+			doInit();
+			inited.add(getClass());
+		}
+	}
+
+	protected void doInit() throws Exception {
+	}
+
+	protected static ResultActions login(String username, String password) throws Exception {
+		final AccountCredentials credentials = new AccountCredentials();
+		credentials.setUsername(username);
+		credentials.setPassword(password);
+		return mockMvc.perform(post("/login").content(json(credentials)).contentType(MediaType.APPLICATION_JSON));
+	}
+
+	protected String extractToken(MvcResult result) throws UnsupportedEncodingException {
+		// return JsonPath.read(result.getResponse().getContentAsString(),
+		// "$.token");
+		return result.getResponse().getHeader(HEADER_STRING);
+	}
+
+	protected static String json(Object obj) throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(obj);
+	}
+
+	@Test
+	public void test() {
+	}
 }
