@@ -3,6 +3,7 @@ package com.vodafone.customer;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -31,7 +32,7 @@ public class AllCustomersTests extends AbstractMvcTest {
 				e.printStackTrace();
 			}
     }
-
+    @Ignore
     @Test
     public void getAllCustomer_Unathenticated() {
 		    try {
