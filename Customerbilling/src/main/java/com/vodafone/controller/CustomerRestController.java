@@ -84,7 +84,7 @@ public class CustomerRestController {
 				HttpStatus.ACCEPTED);
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ROOT')")
 	@DeleteMapping(value = "/customer/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> deleteCustomer(@PathVariable Long id) throws ServiceException, DatabaseException {
 

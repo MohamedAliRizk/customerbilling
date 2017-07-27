@@ -1,8 +1,10 @@
 package com.vodafone.security;
 
-import static java.util.Collections.emptyList;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,15 +12,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vodafone.exception.ServiceException;
-import com.vodafone.util.RedisUtil;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 public class TokenAuthenticationService {
 
@@ -31,27 +37,23 @@ public class TokenAuthenticationService {
 
 	static String addAuthentication(HttpServletResponse res, String username) {
 		LOGGER.info("Generateing Token for user : " + username);
-		
+
 		String JWT = null;
-		
-		try{
-			
-			Claims claims = Jwts.claims().setSubject(username);
-			
-			//TODO add real roles based on API call or DB cached user roles 
-			claims.put("roles","ADMIN,ROOT");
-		
-			JWT = Jwts.builder().setClaims(claims).setSubject(username).setIssuedAt(generateCurrentDate())
+
+		try {
+
+			JWT = Jwts.builder().setSubject(username).claim("roles", "ROOT,ADMIN").setIssuedAt(generateCurrentDate())
 					.setExpiration(generateExpirationDate()).signWith(SignatureAlgorithm.HS512, SECRET).compact();
 
-		}catch(Exception ex){
-			
-			//logging sl4j
-			
-//			throw new ServiceException("Error while building JWT token "+ex.getMessage());
+		} catch (Exception ex) {
+
+			// TODO appropirate error logging with ex details
+
+			// throw new ServiceException("Error while building JWT token
+			// "+ex.getMessage());
 		}
-		 
-		LOGGER.info("Saving Token for user : " + username + " in Redis");
+
+		// LOGGER.info("Saving Token for user : " + username + " in Redis");
 		// RedisUtil.INSTANCE.set(username, JWT);
 
 		res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
@@ -59,12 +61,15 @@ public class TokenAuthenticationService {
 	}
 
 	static String addAuthentication(Claims claims) {
+
 		LOGGER.info("Generateing Token for claims : " + claims);
+
 		String JWT = Jwts.builder().setClaims(claims).setIssuedAt(generateCurrentDate())
 				.setExpiration(generateExpirationDate()).signWith(SignatureAlgorithm.HS512, SECRET).compact();
 
-		LOGGER.info("Saving Token for user : " + claims.getSubject() + " in Redis");
-//		RedisUtil.INSTANCE.set(claims.getSubject(), JWT);
+		// LOGGER.info("Saving Token for user : " + claims.getSubject() + " in
+		// Redis");
+		// RedisUtil.INSTANCE.set(claims.getSubject(), JWT);
 
 		return JWT;
 	}
@@ -78,32 +83,47 @@ public class TokenAuthenticationService {
 			token = token.replace(TOKEN_PREFIX, "").trim();
 
 			String user = null;
+			List<GrantedAuthority> roles;
 			try {
-				// parse the token.
+				// parse the token
 				user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
 
-			} catch (AuthenticationException ex) {
+				List<String> roleString = Arrays.asList(Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token)
+						.getBody().get("roles").toString().split(","));
+
+				roles = new ArrayList<GrantedAuthority>();
+
+				Iterator<String> it = roleString.iterator();
+				while (it.hasNext()) {
+					roles.add(new SimpleGrantedAuthority(it.next()));
+				}
+
+			} catch (MalformedJwtException | UnsupportedJwtException | SignatureException | ExpiredJwtException
+					| IllegalArgumentException ex) {
 
 				SecurityContextHolder.clearContext();
 
-				// Logging detailed ex
+				// TODO Logging detailed ex
 				throw new com.vodafone.exception.AuthenticationException("Customer is not authenticated");
 			} catch (Exception ex) {
 
-				// Logging detailed ex
+				// TODO Logging detailed ex
 				throw new ServiceException("");
 			}
 
 			LOGGER.debug("Token : " + token + " relate to user : " + user);
 
 			// Another way save active users in set
-			String cachedToken = RedisUtil.INSTANCE.get(user);
-			LOGGER.info("Found token : " + cachedToken + " in Redis for user : " + user);
-			boolean isTokenAlreadyExist = token.equals(cachedToken);
-			LOGGER.info("Token : " + token + " relate to user : " + user
-					+ (isTokenAlreadyExist ? " is already" : " is not") + " exist in redis");
+			// String cachedToken = RedisUtil.INSTANCE.get(user);
 
-			return isTokenAlreadyExist ? new UsernamePasswordAuthenticationToken(user, null, emptyList()) : null;
+			// LOGGER.info("Found token : " + cachedToken + " in Redis for user
+			// : " + user);
+			// boolean isTokenAlreadyExist = token.equals(cachedToken);
+			// LOGGER.info("Token : " + token + " relate to user : " + user
+			// + (isTokenAlreadyExist ? " is already" : " is not") + " exist in
+			// redis");
+
+			return new UsernamePasswordAuthenticationToken(user, null, roles);
 		}
 		return null;
 	}

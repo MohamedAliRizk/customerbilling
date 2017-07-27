@@ -12,10 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.vodafone.exception.ServiceException;
 
+@Component
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
 	@Override
@@ -23,9 +25,9 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
 			throws IOException, ServletException {
 		Authentication authentication = null;
 		try {
-			
+
 			authentication = TokenAuthenticationService.getAuthentication((HttpServletRequest) request);
-			
+
 		} catch (ServiceException e) {
 
 			HttpServletResponse httpServlet = (HttpServletResponse) response;
@@ -34,12 +36,12 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
 
 			PrintWriter writer = httpServlet.getWriter();
 			writer.println("HTTP Status 401 :: " + e.getMessage());
-			
+
 			httpServlet.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Exception has occured");
 
 		}
-
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+
 		filterChain.doFilter(request, response);
 	}
 }
