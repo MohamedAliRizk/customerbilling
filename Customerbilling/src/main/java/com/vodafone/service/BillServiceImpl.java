@@ -6,7 +6,6 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.vodafone.controller.CustomerRestController;
 import com.vodafone.dao.BillDAO;
 import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Bill;
@@ -19,7 +18,7 @@ public class BillServiceImpl implements BillService{
 	BillDAO billDAO;
 	@Autowired
 	CustomerService customerService;
-	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
+	private static final Logger LOGGER = Logger.getLogger(BillServiceImpl.class);
 	@Override
 	public List<Bill> findAllBills(long customerID)throws UserNotFoundException {
 		// TODO Auto-generated method stub

@@ -3,25 +3,25 @@ package com.vodafone.service;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.vodafone.controller.CustomerRestController;
 import com.vodafone.dao.CustomerDAO;
 import com.vodafone.dto.CustomerUpdateDTO;
 import com.vodafone.dto.CustomerUpdateRepresentation;
 import com.vodafone.exception.DatabaseException;
 import com.vodafone.exception.ServiceException;
-
 import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Customer;
-import com.vodafone.utils.Validator;
 
 @Service("customerService")
 public class CustomerServiceImpl implements CustomerService {
 
 	private static List<Customer> customers;
-	
+
 	@Autowired
 	CustomerDAO customerDAO;
 
@@ -31,7 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
 
 	@PostConstruct
-	public void populateList(){
+	public void populateList() {
 		customers = customerDAO.findAll();
 	}
 
@@ -46,7 +46,6 @@ public class CustomerServiceImpl implements CustomerService {
 		} else
 			return customerFound;
 	}
-	
 
 	@Override
 	public Customer findByName(String name) {
@@ -77,36 +76,16 @@ public class CustomerServiceImpl implements CustomerService {
 		return false;
 	}
 
-	
-
 	@Override
-	public CustomerUpdateRepresentation updateCustomer(CustomerUpdateDTO customerUpdateDTO, Long id)
+	public CustomerUpdateRepresentation updateCustomer(CustomerUpdateDTO customerUpdateDTO)
 			throws DatabaseException, UserNotFoundException {
-
-		if (id == null || id.longValue() <= 0) {
-			LOGGER.error("Invalid customer Id");
-			throw new UserNotFoundException("Invalid customer Id");
-		} else if (!Validator.isValidCustomerUpdateData(customerUpdateDTO)) {
-			LOGGER.error("Invalid customer data");
-			// TODO add meaningful exception for data integrity as any other API
-			throw new UserNotFoundException("Invalid customer data");
-		}
 
 		Customer customer = null;
 
-		try {
-
-			customer = findById(id);
-
-		} catch (Exception ex) {
-			// TODO add possible logic here
-			LOGGER.error("Error while finding customer with id " + id + " : " + ex.getMessage());
-
-			throw new DatabaseException("Error finding customer with id " + id + ex.getMessage());
-		}
+		customer = findById(customerUpdateDTO.getId());
 
 		if (customer == null) {
-			throw new UserNotFoundException("Customer with id " + id + " was not found");
+			throw new UserNotFoundException("Customer with id " + customerUpdateDTO.getId() + " was not found");
 		}
 		customer.setAddress(customerUpdateDTO.getAddress());
 		customer.setFullName(customerUpdateDTO.getFullName());
@@ -116,12 +95,10 @@ public class CustomerServiceImpl implements CustomerService {
 
 		CustomerUpdateRepresentation customerUpdateRepresentation = new CustomerUpdateRepresentation();
 
-		if (customer.getAddress() != null) {
-			customerUpdateRepresentation.setAddress(customer.getAddress());
-		}
-		if (customer.getFullName() != null) {
-			customerUpdateRepresentation.setFullName(customer.getFullName());
-		}
+		customerUpdateRepresentation.setAddress(customer.getAddress());
+
+		customerUpdateRepresentation.setFullName(customer.getFullName());
+
 		customerUpdateRepresentation.setAge(customer.getAge());
 		customerUpdateRepresentation.setId(customer.getId());
 		customerUpdateRepresentation.setMobileNumber(customer.getMobileNumber());
