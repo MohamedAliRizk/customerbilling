@@ -8,7 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ import com.vodafone.dto.Response;
 
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 	
-	private static final Logger LOGGER = Logger.getLogger(JWTLoginFilter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JWTLoginFilter.class);
 
 	public JWTLoginFilter(String url, AuthenticationManager authManager) {
 		super(new AntPathRequestMatcher(url));

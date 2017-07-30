@@ -1,6 +1,6 @@
 package com.vodafone.controller;
 
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,6 @@ import com.vodafone.exception.UserNotFoundException;
 @RestController
 public class AuthenticationController {
 	
-	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
 
 }

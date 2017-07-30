@@ -2,7 +2,7 @@ package com.vodafone.controller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,7 +33,7 @@ import com.vodafone.service.CustomerService;
 // @Secured("ACTUATOR")
 public class CustomerRestController {
 
-	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger("Controller");
 
 	@Autowired
 	private CustomerService customerService;
@@ -45,18 +45,6 @@ public class CustomerRestController {
 	public ResponseEntity<List<Customer>> getAllCustomers() {
 		LOGGER.debug("Inside getAllCustomers.");
 		List<Customer> customers = customerService.findAllCustomers();
-		if (customers.isEmpty()) {
-			LOGGER.info("Customer List is empty.");
-			return new ResponseEntity<List<Customer>>(HttpStatus.NO_CONTENT);
-		}
-		return new ResponseEntity<List<Customer>>(customers, HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ResponseEntity<List<Customer>> listAllCustomers() {
-		LOGGER.debug("Start listAllCustomers Method.");
-		List<Customer> customers = customerService.findAllCustomers();
-		LOGGER.debug("Getting Customer List from Customer Service.");
 		if (customers.isEmpty()) {
 			LOGGER.info("Customer List is empty.");
 			return new ResponseEntity<List<Customer>>(HttpStatus.NO_CONTENT);

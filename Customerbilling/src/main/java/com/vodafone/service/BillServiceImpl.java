@@ -2,7 +2,7 @@ package com.vodafone.service;
 
 import java.util.List;
 
-import org.jboss.logging.Logger;
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class BillServiceImpl implements BillService{
 	BillDAO billDAO;
 	@Autowired
 	CustomerService customerService;
-	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerRestController.class);
 	@Override
 	public List<Bill> findAllBills(long customerID)throws UserNotFoundException {
 		// TODO Auto-generated method stub

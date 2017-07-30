@@ -44,7 +44,7 @@ public class CustomerbillingApplicationTests extends AbstractMvcTest {
 				.andReturn().getResponse().getContentAsString();
 		return content.substring(17, 53);
 	}
-	
+	@Ignore
 	@Test
 	public void testListAllCustomers_Authorized() throws Exception {
 		final String token = extractToken(login("bill", "abc123").andReturn());
@@ -55,7 +55,7 @@ public class CustomerbillingApplicationTests extends AbstractMvcTest {
 				.andExpect(jsonPath("$", hasSize(1)))
 				.andExpect(jsonPath("$[0].id", is(1)));
 	}
-	
+	@Ignore
 	@Test
 	public void testListAllCustomers_UnauthorizedInvalidPassword() throws Exception {
 		final String token = extractToken(login("bill", "abc1234").andReturn());
@@ -66,7 +66,7 @@ public class CustomerbillingApplicationTests extends AbstractMvcTest {
 				.header("Authorization", token))
 				.andExpect(status().isUnauthorized());*/
 	}
-	
+	@Ignore
 	@Test
 	public void testGetCustomer_Authorized() throws Exception {
 		final String token = extractToken(login("bill", "abc123").andReturn());

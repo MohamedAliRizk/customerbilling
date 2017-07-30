@@ -3,16 +3,17 @@ package com.vodafone.service;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import org.jboss.logging.Logger;
+
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.vodafone.controller.CustomerRestController;
 import com.vodafone.dao.CustomerDAO;
 import com.vodafone.dto.CustomerUpdateDTO;
 import com.vodafone.dto.CustomerUpdateRepresentation;
 import com.vodafone.exception.DatabaseException;
 import com.vodafone.exception.ServiceException;
-
 import com.vodafone.exception.UserNotFoundException;
 import com.vodafone.model.Customer;
 import com.vodafone.utils.Validator;
@@ -28,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	private CustomerDAO customerDAOImpl;
 
-	private static final Logger LOGGER = Logger.getLogger(CustomerRestController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerRestController.class);
 
 	@PostConstruct
 	public void populateList(){

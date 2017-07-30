@@ -7,7 +7,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 import org.springframework.security
             .authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,7 +20,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 public class TokenAuthenticationService {
 	
-	private static final Logger LOGGER = Logger.getLogger(TokenAuthenticationService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationService.class);
 
 	static final long EXPIRATIONTIME = 3600000; // 1 hour
 	static final String SECRET = "ThisIsASecret";

@@ -3,7 +3,7 @@ package com.vodafone.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.logging.Logger;
+import org.slf4j.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import com.vodafone.service.CustomerServiceImpl;
 public class CustomerDAOImpl implements CustomerDAO {
 
 	private static List<Customer> customers;
-	private static Logger logger = Logger.getLogger(CustomerServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
 	static{
 		customers= populateDummyCustomers();
 	}

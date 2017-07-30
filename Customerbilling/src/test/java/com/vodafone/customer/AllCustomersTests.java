@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class AllCustomersTests extends AbstractMvcTest {
-	
+	@Ignore
     @Test
     public void getAllCustomer_authorized() {
 		try {
@@ -20,7 +20,7 @@ public class AllCustomersTests extends AbstractMvcTest {
 			e.printStackTrace();
 		}
     }
-    
+    @Ignore
     @Test
     public void getAllCustomer_Unauthorized() {
 		    try {
