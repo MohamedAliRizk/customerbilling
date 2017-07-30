@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import com.vodafone.dto.CustomerUpdateRepresentation;
 import com.vodafone.exception.DatabaseException;
 import com.vodafone.exception.ServiceException;
 import com.vodafone.exception.UserNotFoundException;
+import com.vodafone.groups.Update;
 import com.vodafone.model.Bill;
 import com.vodafone.model.Customer;
 import com.vodafone.service.BillService;
@@ -62,17 +64,18 @@ public class CustomerRestController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(value = "/customer/{id}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> updateCustomer(@RequestBody CustomerUpdateDTO customerUpdateDTO, @PathVariable Long id)
-			throws UserNotFoundException, DatabaseException {
+	@PutMapping(value = "/customer/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateCustomer(
+			@Validated({ Update.class }) @RequestBody CustomerUpdateDTO customerUpdateDTO)
+			throws UserNotFoundException, DatabaseException{
 
-		LOGGER.info("An attempt to update data for customer with id : " + id);
+		LOGGER.info("An attempt to update data for customer with id : " + customerUpdateDTO.getId());
 
-		return new ResponseEntity<CustomerUpdateRepresentation>(customerService.updateCustomer(customerUpdateDTO, id),
+		return new ResponseEntity<CustomerUpdateRepresentation>(customerService.updateCustomer(customerUpdateDTO),
 				HttpStatus.ACCEPTED);
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ROOT')")
 	@DeleteMapping(value = "/customer/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> deleteCustomer(@PathVariable Long id) throws ServiceException, DatabaseException {
 

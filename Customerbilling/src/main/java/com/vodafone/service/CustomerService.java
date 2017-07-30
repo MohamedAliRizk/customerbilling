@@ -17,7 +17,7 @@ public interface CustomerService {
 
 	void saveCustomer(Customer customer);
 
-	public CustomerUpdateRepresentation updateCustomer(CustomerUpdateDTO customer,Long id) throws DatabaseException, UserNotFoundException;
+	public CustomerUpdateRepresentation updateCustomer(CustomerUpdateDTO customer) throws DatabaseException, UserNotFoundException;
 
 	public void deleteCustomerById(Long id) throws ServiceException, DatabaseException;
 

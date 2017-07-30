@@ -7,6 +7,7 @@ import org.slf4j.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import com.vodafone.model.Address;
 import com.vodafone.model.Customer;
 import com.vodafone.model.FullName;
 import com.vodafone.service.CustomerServiceImpl;
@@ -16,59 +17,65 @@ public class CustomerDAOImpl implements CustomerDAO {
 
 	private static List<Customer> customers;
 	private static Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
-	static{
-		customers= populateDummyCustomers();
+	static {
+		customers = populateDummyCustomers();
 	}
-	
-	
-		@Override
-		public void save(Customer customer) {
 
-			Customer possibleCustomer = customers.stream().filter(c -> customer.getId() == c.getId().longValue()).findAny()
-					.orElse(null);
+	@Override
+	public void save(Customer customer) {
 
-			if (possibleCustomer != null) {
+		Customer possibleCustomer = customers.stream().filter(c -> customer.getId() == c.getId().longValue()).findAny()
+				.orElse(null);
 
+		if (possibleCustomer != null) {
+			if (customer.getAddress() != null)
 				customers.get(0).setAddress(customer.getAddress());
+
+			if (customer.getAge() > 0)
 				customers.get(0).setAge(customer.getAge());
-				customers.get(0).setFullName(customer.getFullName());
+
+			if (customer.getMobileNumber() != null)
 				customers.get(0).setMobileNumber(customer.getMobileNumber());
-			} else {
-				throw new UsernameNotFoundException("Customer with id "+ customer.getId()+" Not found ");
-			}
 
+			customers.get(0).setFullName(customer.getFullName());
+		} else {
+			throw new UsernameNotFoundException("Customer with id " + customer.getId() + " Not found ");
 		}
 
-		@Override
-		public void delete(Customer customer) {
+	}
 
-			Customer possibleCustomer = customers.stream().filter(c -> customer.getId() == c.getId().longValue()).findAny()
-					.orElse(null);
+	@Override
+	public void delete(Customer customer) {
 
-			if (possibleCustomer != null) {
-				customers.remove(possibleCustomer);
-			} else {
-				throw new UsernameNotFoundException("Customer with id "+ customer.getId()+" Not found ");
-			}
+		Customer possibleCustomer = customers.stream().filter(c -> customer.getId() == c.getId().longValue()).findAny()
+				.orElse(null);
+
+		if (possibleCustomer != null) {
+			customers.remove(possibleCustomer);
+		} else {
+			throw new UsernameNotFoundException("Customer with id " + customer.getId() + " Not found ");
 		}
+	}
 
-	
 	@Override
 	public List<Customer> findAll() {
 		return customers;
 	}
 
-	
-	
-	private static List<Customer> populateDummyCustomers(){
-		List<Customer> customers = new ArrayList<Customer>();
+	private static List<Customer> populateDummyCustomers() {
+		customers = new ArrayList<Customer>();
 		Customer customer1 = new Customer();
 		customer1.setId(1l);
-		FullName fullname1 = new FullName();
-		fullname1.setFirstName("Moh1");
-	         	fullname1.setMiddleName("Ali1");
-		fullname1.setLastName("Rizk1");
+		FullName fullname1 = new FullName("Moh", "Ali", "Rizk");
+		Address address = new Address();
+		address.setStreet("Taha Hussien");
+		address.setCity("minia");
+		address.setCountry("Egypt");
+
 		customer1.setFullName(fullname1);
+		customer1.setAddress(address);
+		customer1.setAge(30);
+		customer1.setMobileNumber("01018286411");
 		customers.add(customer1);
 		return customers;
 	}

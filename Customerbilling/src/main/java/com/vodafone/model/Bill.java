@@ -12,7 +12,8 @@ public class Bill implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	/*@NotNull(groups={Update.class},message="id shouldn't be empty in case of Updating")
+	@Null(groups={Create.class},message="id should be empty in case of creating")*/
 	private long id;
 	private Customer customer;
 	private double paid;
