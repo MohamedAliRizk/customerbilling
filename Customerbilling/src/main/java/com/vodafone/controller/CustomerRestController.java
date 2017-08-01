@@ -43,7 +43,8 @@ public class CustomerRestController {
 	private BillService billService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ROOT')")
 	public ResponseEntity<List<Customer>> getAllCustomers() {
 		LOGGER.debug("Inside getAllCustomers.");
 		List<Customer> customers = customerService.findAllCustomers();
@@ -55,7 +56,8 @@ public class CustomerRestController {
 	}
 
 	@GetMapping(value = "/{id}", produces = "application/json")
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ROOT')")
 	public @ResponseBody ResponseEntity<?> getCustomer(@PathVariable long id) throws UserNotFoundException {
 		LOGGER.info("Fetching Customer with id " + id);
 		Customer customer = null;
@@ -63,7 +65,8 @@ public class CustomerRestController {
 		return new ResponseEntity<Customer>(customer, HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ROOT')")
 	@PutMapping(value = "/customer/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updateCustomer(
 			@Validated({ Update.class }) @RequestBody CustomerUpdateDTO customerUpdateDTO)
@@ -89,6 +92,7 @@ public class CustomerRestController {
 	@RequestMapping(value = "{customerID}/bills", method = RequestMethod.GET, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	// @PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ROOT')")
 	public @ResponseBody ResponseEntity<?> getCustomerBills(@PathVariable("customerID") long customerID)
 			throws UserNotFoundException {
 		LOGGER.info("Fetching Customer Bills with id " + customerID);

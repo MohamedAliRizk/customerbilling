@@ -16,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.vodafone.exception.AuthenticationException;
 import com.vodafone.exception.ServiceException;
 
 import io.jsonwebtoken.Claims;
@@ -28,28 +29,33 @@ import io.jsonwebtoken.UnsupportedJwtException;
 
 public class TokenAuthenticationService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationService.class);
+	private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationService.class);
+
 	static final long EXPIRATIONTIME = 3600000; // 1 hour
 	static final String SECRET = "ThisIsASecret";
 	static final String TOKEN_PREFIX = "Bearer";
 	static final String HEADER_STRING = "Authorization";
 
-	static String addAuthentication(HttpServletResponse res, String username) {
-		LOGGER.info("Generateing Token for user : " + username);
+	static String addAuthentication(HttpServletResponse res, String username) throws ServiceException {
+		logger.info("Generateing JWT for user :{} ", username);
 
 		String JWT = null;
 
 		try {
 
-			JWT = Jwts.builder().setSubject(username).claim("roles", "ROOT,ADMIN").setIssuedAt(generateCurrentDate())
+			String roleNewValue="USER";
+			if(username.equals("bill")){
+				roleNewValue="ROOT";
+			}
+			
+			JWT = Jwts.builder().setSubject(username).claim("roles",roleNewValue ).setIssuedAt(generateCurrentDate())
 					.setExpiration(generateExpirationDate()).signWith(SignatureAlgorithm.HS512, SECRET).compact();
 
 		} catch (Exception ex) {
 
-			// TODO appropirate error logging with ex details
+			logger.error("{} occured while building JWT for user : {}, , full stack trace is: [{}]",ex.getClass().getSimpleName(), username, ex);
 
-			// throw new ServiceException("Error while building JWT token
-			// "+ex.getMessage());
+			throw new AuthenticationException("{} occured while building JWT " + ex.getMessage());
 		}
 
 		// LOGGER.info("Saving Token for user : " + username + " in Redis");
@@ -59,12 +65,21 @@ public class TokenAuthenticationService {
 		return JWT;
 	}
 
-	static String addAuthentication(Claims claims) {
+	static String addAuthentication(Claims claims) throws ServiceException {
 
-		LOGGER.info("Generateing Token for claims : " + claims);
+		logger.info("Generateing Token for claims : {}", claims);
 
-		String JWT = Jwts.builder().setClaims(claims).setIssuedAt(generateCurrentDate())
-				.setExpiration(generateExpirationDate()).signWith(SignatureAlgorithm.HS512, SECRET).compact();
+		String JWT;
+		try {
+			
+			JWT = Jwts.builder().setClaims(claims).setIssuedAt(generateCurrentDate())
+					.setExpiration(generateExpirationDate()).signWith(SignatureAlgorithm.HS512, SECRET).compact();
+
+		} catch (Exception ex) {
+			logger.error("{} occured while building JWT from claims {}, full stack trace is: [{}]",ex.getClass().getSimpleName(), claims, ex);
+
+			throw new AuthenticationException(ex.getClass().getSimpleName()+" occured while building JWT from claims");
+		}
 
 		// LOGGER.info("Saving Token for user : " + claims.getSubject() + " in
 		// Redis");
@@ -74,43 +89,60 @@ public class TokenAuthenticationService {
 	}
 
 	static Authentication getAuthentication(HttpServletRequest request) throws ServiceException {
+		
 		String token = request.getHeader(HEADER_STRING);
-		LOGGER.info("Validating Token : " + token);
+		
+		logger.info("An attempt to validate JWT : {}" , token);
 
 		if (token != null) {
 
 			token = token.replace(TOKEN_PREFIX, "").trim();
 
 			String user = null;
-			List<GrantedAuthority> roles;
+			List<GrantedAuthority> grantedAuthorities;
 			try {
-				// parse the token
+				
+				
 				user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
 
-				List<String> roleString = Arrays.asList(Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token)
-						.getBody().get("roles").toString().split(","));
+				logger.info("User {} has been extracted from JWT");
+				
+				String allRoles = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token)
+						.getBody().get("roles").toString();
+				
+				logger.info("User {} has the following roles [{}]",allRoles);
 
-				roles = new ArrayList<GrantedAuthority>();
+				
+				List<String> roleString = Arrays.asList(allRoles.split(","));
 
+				grantedAuthorities = new ArrayList<GrantedAuthority>();
+				
 				Iterator<String> it = roleString.iterator();
 				while (it.hasNext()) {
-					roles.add(new SimpleGrantedAuthority(it.next()));
+					String currentRole= it.next();
+					grantedAuthorities.add(new SimpleGrantedAuthority(currentRole));
+					logger.debug("User {} role {} added to GrantedAuthorities",user,currentRole);
 				}
 
 			} catch (MalformedJwtException | UnsupportedJwtException | SignatureException | ExpiredJwtException
 					| IllegalArgumentException ex) {
 
+				logger.error("{} occured while parsing JWT, full stack trace: [{}]",ex.getClass().getSimpleName(),ex);
+				
 				SecurityContextHolder.clearContext();
 
-				// TODO Logging detailed ex
-				throw new com.vodafone.exception.AuthenticationException("Customer is not authenticated");
+				throw new AuthenticationException(ex.getClass().getSimpleName()+" occured while building JWT from claims");
 			} catch (Exception ex) {
 
-				// TODO Logging detailed ex
-				throw new ServiceException("");
+
+				logger.error("{} occured while parsing JWT, full stack trace: [{}]",ex.getClass().getSimpleName(),ex);
+				
+				SecurityContextHolder.clearContext();
+
+				throw new ServiceException(ex.getClass().getSimpleName()+" occured while building JWT from claims");
 			}
 
-			LOGGER.debug("Token : " + token + " relate to user : " + user);
+			logger.debug("Token : " + token + " relate to user : " + user);
 
 			// Another way save active users in set
 			// String cachedToken = RedisUtil.INSTANCE.get(user);
@@ -122,7 +154,7 @@ public class TokenAuthenticationService {
 			// + (isTokenAlreadyExist ? " is already" : " is not") + " exist in
 			// redis");
 
-			return new UsernamePasswordAuthenticationToken(user, null, roles);
+			return new UsernamePasswordAuthenticationToken(user, null, grantedAuthorities);
 		}
 		return null;
 	}

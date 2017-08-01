@@ -8,10 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +20,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vodafone.dto.AccountCredentials;
+import com.vodafone.exception.ServiceException;
 
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -58,7 +57,12 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 		LOGGER.info("Successfully authenticate Customer with username : " + auth.getName() + " with details : "
 				+ auth.getDetails());
 
-		TokenAuthenticationService.addAuthentication(res, auth.getName());
+		try {
+			TokenAuthenticationService.addAuthentication(res, auth.getName());
+		} catch (ServiceException e) {
+			logger.error("Authentication Exception occured");
+			res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Exception has occured");
+		}
 	}
 
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,

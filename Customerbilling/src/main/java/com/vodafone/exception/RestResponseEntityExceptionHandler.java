@@ -46,8 +46,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
 	@ExceptionHandler(value = { AccessDeniedException.class })
 	public ResponseEntity<?> handleAuthorizationException(AccessDeniedException ex) {
-		Response res = new Response("Authorization Exception has occured", 403);
-		ResponseEntity<Response> entity = new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+		Response res = new Response("Authorization Exception has occured", 401);
+		ResponseEntity<Response> entity = new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
 		return entity;
 	}
 	@Override

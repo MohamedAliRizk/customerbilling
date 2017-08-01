@@ -44,7 +44,7 @@ public class CustomerbillingApplicationTests extends AbstractMvcTest {
 				.andReturn().getResponse().getContentAsString();
 		return content.substring(17, 53);
 	}
-	@Ignore
+//	@Ignore
 	@Test
 	public void testListAllCustomers_Authorized() throws Exception {
 		final String token = extractToken(login("bill", "abc123").andReturn());
@@ -66,7 +66,7 @@ public class CustomerbillingApplicationTests extends AbstractMvcTest {
 				.header("Authorization", token))
 				.andExpect(status().isUnauthorized());*/
 	}
-	@Ignore
+//	@Ignore
 	@Test
 	public void testGetCustomer_Authorized() throws Exception {
 		final String token = extractToken(login("bill", "abc123").andReturn());
@@ -77,7 +77,7 @@ public class CustomerbillingApplicationTests extends AbstractMvcTest {
 				.andExpect(jsonPath("$.id", is(1)));
 	}
 	
-	@Ignore("To configure roles in JWT attemptauthentication")
+//	@Ignore("To configure roles in JWT attemptauthentication")
 	@Test
 	public void testGetCustomer_UnauthorizedRole() throws Exception {
 		final String token = extractToken(login("tom", "abc123").andReturn());

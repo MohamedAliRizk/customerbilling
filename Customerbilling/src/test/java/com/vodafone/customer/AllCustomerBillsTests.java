@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.http.MediaType;
 
 public class AllCustomerBillsTests extends AbstractMvcTest {
-	@Ignore
+//	@Ignore
 	@Test
 	public void tesGetAllCustomerBills_CustomerFound() throws Exception {
 		final String token = extractToken(login("bill", "abc123").andReturn());

@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class AllCustomersTests extends AbstractMvcTest {
-	@Ignore
+//	@Ignore
     @Test
     public void getAllCustomer_authorized() {
 		try {
@@ -20,14 +20,14 @@ public class AllCustomersTests extends AbstractMvcTest {
 			e.printStackTrace();
 		}
     }
-    @Ignore
+//    @Ignore
     @Test
     public void getAllCustomer_Unauthorized() {
 		    try {
 		    	final String token = extractToken(login("tom", "abc123").andReturn());
 		    	mockMvc.perform(MockMvcRequestBuilders.get("/customers")
 		    			.header("Authorization", token))
-		    	.andExpect(status().isOk());
+		    	.andExpect(status().isUnauthorized());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
