@@ -43,7 +43,7 @@ public class CustomerRestController {
 	private BillService billService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<List<Customer>> getAllCustomers() {
 		LOGGER.debug("Inside getAllCustomers.");
 		List<Customer> customers = customerService.findAllCustomers();
